@@ -1,6 +1,7 @@
 ################################################################################
 ##  File:  Install-AWS.ps1
 ##  Desc:  Install AWS tools(AWS CLI, Session Manager Plugin for the AWS CLI, AWS SAM CLI)
+##  Supply chain security: AWS CLI - managed by package manager, Session Manager Plugin for the AWS CLI - missing, AWS SAM CLI - checksum validation
 ################################################################################
 
 # Install AWS CLI
@@ -13,6 +14,14 @@ Install-Binary -Url $sessionManagerUrl -Name $sessionManagerName -ArgumentList (
 $env:Path = $env:Path + ";$env:ProgramFiles\Amazon\SessionManagerPlugin\bin"
 
 # Install AWS SAM CLI
-Install-Binary -Url "https://github.com/awslabs/aws-sam-cli/releases/latest/download/AWS_SAM_CLI_64_PY3.msi" -Name "AWS_SAM_CLI_64_PY3.msi"
+$packageName = "AWS_SAM_CLI_64_PY3.msi"
+$repoURL = "https://github.com/awslabs/aws-sam-cli/releases/latest"
+$packagePath = Start-DownloadWithRetry -Url "$repoURL/download/$packageName" -Name $packageName
+
+#region Supply chain security - AWS SAM CLI
+$fileHash = (Get-FileHash -Path $packagePath -Algorithm SHA256).Hash
+$externalHash = Get-HashFromGitHubReleaseBody -RepoOwner "awslabs" -RepoName "aws-sam-cli" -FileName $packageName
+Use-ChecksumСomparison $fileHash $externalHash
+#endregion
 
 Invoke-PesterTests -TestFile "CLI.Tools" -TestName "AWS"
