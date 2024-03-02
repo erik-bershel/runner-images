@@ -118,7 +118,7 @@ Describe "Xcode simulators" {
 
 Describe "Xcode Simulators Naming" -Skip:(-not $os.IsMonterey) {
     $testCases = Get-BrokenXcodeSimulatorsList
-    It "Simulator <SimulatorName> [<RuntimeId>]" -TestCases $testCases {
+    It "Simulator <simulatorname> [<runtimeid>]" -TestCases $testCases {
         $simctlPath = Get-XcodeToolPath -Version $XcodeVersion -ToolName "simctl"
         [string]$rawDevicesInfo = Invoke-Expression "$simctlPath list devices --json"
         $jsonDevicesInfo = ($rawDevicesInfo | ConvertFrom-Json).devices
