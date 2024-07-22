@@ -39,7 +39,6 @@ class HeaderNode: BaseNode {
     }
 
     [void] AddNode([BaseNode] $node) {
-        Write-Host $node
         $similarNode = $this.FindSimilarChildNode($node)
         if ($similarNode) {
             throw "This HeaderNode already contains the similar child node. It is not allowed to add the same node twice.`nFound node: $($similarNode.ToJsonObject() | ConvertTo-Json)`nNew node: $($node.ToJsonObject() | ConvertTo-Json)"
@@ -72,12 +71,14 @@ class HeaderNode: BaseNode {
     }
 
     [HeaderNode] AddHeader([String] $Title) {
+        Write-Host "Title: $Title"
         $node = [HeaderNode]::new($Title)
         $this.AddNode($node)
         return $node
     }
 
     [void] AddToolVersion([String] $ToolName, [String] $Version) {
+        Write-Host " - $ToolName : $Version"
         $this.AddNode([ToolVersionNode]::new($ToolName, $Version))
     }
 
@@ -90,7 +91,8 @@ class HeaderNode: BaseNode {
     }
      
     [void] AddTable([PSCustomObject[]] $Table) {
-       $this.AddNode([TableNode]::FromObjectsArray($Table))
+        Write-Host "$Table"
+        $this.AddNode([TableNode]::FromObjectsArray($Table))
     }
 
     [void] AddNote([String] $Content) {
