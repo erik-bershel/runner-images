@@ -39,6 +39,7 @@ class HeaderNode: BaseNode {
     }
 
     [void] AddNode([BaseNode] $node) {
+        Write-Host $node
         $similarNode = $this.FindSimilarChildNode($node)
         if ($similarNode) {
             throw "This HeaderNode already contains the similar child node. It is not allowed to add the same node twice.`nFound node: $($similarNode.ToJsonObject() | ConvertTo-Json)`nNew node: $($node.ToJsonObject() | ConvertTo-Json)"
