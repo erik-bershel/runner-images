@@ -180,14 +180,15 @@ function Build-XcodeSimulatorsTable {
         [hashtable] $xcodeInfo
     )
 
+    Write-Host "Xcode info:`n$xcodeInfo"
     $runtimes = @()
     $xcodeInfo.Values | ForEach-Object {
         $_.SimulatorsInfo.runtimes | ForEach-Object {
             $runtimes += $_
         }
     }
-
     $runtimes = $runtimes | Sort-Object @{ Expression = { $_.identifier } } -Unique
+    Write-Host "Runtimes info:`n$xcodeInfo"
 
     return $runtimes | ForEach-Object {
         $runtime = $_
