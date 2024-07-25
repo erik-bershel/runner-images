@@ -180,21 +180,23 @@ function Build-XcodeSimulatorsTable {
         [hashtable] $xcodeInfo
     )
 
-    Write-Host "Xcode info:`n$xcodeInfo"
+    Write-Host "Xcode info:"
     $runtimes = @()
     $xcodeInfo.Values | ForEach-Object {
+        Write-Host "Xcode version: $($_.VersionInfo.Version)"
         $_.SimulatorsInfo.runtimes | ForEach-Object {
+            Write-Host "  - $_"
             $runtimes += $_
         }
     }
     $runtimes = $runtimes | Sort-Object @{ Expression = { $_.identifier } } -Unique
-    Write-Host "Runtimes info:`n$xcodeInfo"
-
+    Write-Host "------ Output ------"
     return $runtimes | ForEach-Object {
         $runtime = $_
+        Write-Host "Runtime: $runtime"
         $runtimeDevices = @()
         $xcodeList = @()
-
+        Write-Host " Marker_1"
         $xcodeInfo.Values | ForEach-Object {
             $runtimeFound = $_.SimulatorsInfo.runtimes | Where-Object { $_.identifier -eq $runtime.identifier } | Select-Object -First 1
             if ($runtimeFound) {
@@ -203,7 +205,7 @@ function Build-XcodeSimulatorsTable {
                 $xcodeList += $_.VersionInfo.Version
             }
         }
-
+        Write-Host " Marker_2"
         $xcodeList = $xcodeList | Sort-Object
         $runtimeDevices = $runtimeDevices | ForEach-Object { Format-XcodeSimulatorName $_ } | Select-Object -Unique
         $sortedRuntimeDevices = $runtimeDevices | Sort-Object @{
@@ -212,7 +214,7 @@ function Build-XcodeSimulatorsTable {
         }, {
             $_.Split(" ") | Select-Object -Skip 1 | Join-String -Separator " "
         }
-
+        Write-Host " Marker_3"
         return [PSCustomObject] @{
             "OS" = $runtime.name
             "Xcode Version" = [String]::Join("<br>", $xcodeList)
@@ -220,11 +222,13 @@ function Build-XcodeSimulatorsTable {
         }
     } | Sort-Object {
         # Sort rule 1
+        Write-Host " Marker_Sort1"
         $sdkNameParts = $_."OS".Split(" ")
         $platformName = [String]::Join(" ", $sdkNameParts[0..($sdkNameParts.Length - 2)])
         return Get-XcodePlatformOrder $platformName
     }, {
         # Sort rule 2
+        Write-Host " Marker_Sort2"
         $sdkNameParts = $_."OS".Split(" ")
         return [System.Version]::Parse($sdkNameParts[-1])
     }
