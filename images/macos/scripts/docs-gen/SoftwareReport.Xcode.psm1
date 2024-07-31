@@ -215,6 +215,9 @@ function Build-XcodeSimulatorsTable {
             $_.Split(" ") | Select-Object -Skip 1 | Join-String -Separator " "
         }
         Write-Host " Marker_3"
+        Write-Host (" OS = ", $runtime.name)
+        Write-Host (" Xcode Version = ", [String]::Join("<br>", $xcodeList))
+        Write-Host (" Simulators = ", [String]::Join("<br>", $sortedRuntimeDevices))
         return [PSCustomObject] @{
             "OS" = $runtime.name
             "Xcode Version" = [String]::Join("<br>", $xcodeList)
