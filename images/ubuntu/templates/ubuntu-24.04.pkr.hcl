@@ -161,7 +161,7 @@ source "azure-arm" "build_image" {
   location                               = "${var.location}"
   managed_image_name                     = "${local.managed_image_name}"
   managed_image_resource_group_name      = "${var.managed_image_resource_group_name}"
-  os_disk_size_gb                        = "50"
+  os_disk_size_gb                        = "75"
   os_type                                = "Linux"
   plan_info {
     plan_name      = "${var.plan_info.plan_name}"
